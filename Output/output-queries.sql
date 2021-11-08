@@ -1,40 +1,40 @@
--- Display the number of the customer group by their genders who have placed any order of amount greater than or equal to Rs.3000.
+/* 3) Display the number of the customer group by their genders who have placed any order
+of amount greater than or equal to Rs.3000. */
 
-select * from customer c inner join `order` o on o.CUS_ID=c.CUS_ID where o.ORD_AMOUNT>=3000;
+SELECT c.cus_gender, 
+	COUNT(c.cus_gender) 
+FROM customer c 
+INNER JOIN `order` o 
+	ON o.CUS_ID = c.CUS_ID 
+WHERE o.ORD_AMOUNT >= 3000 
+GROUP BY cus_gender;
 
-select cus_gender from customer c inner join `order` o on o.CUS_ID=c.CUS_ID where o.ORD_AMOUNT>=3000;
+/* 4) Display all the orders along with the product name ordered by a customer having
+Customer_Id=2.*/
 
-select COUNT(cus_gender) from (select cus_gender from customer c inner join `order` o on o.CUS_ID=c.CUS_ID where o.ORD_AMOUNT>=3000) as cg group by cus_gender;
+SELECT o.ORD_ID,
+	o.ORD_AMOUNT,
+    o.ORD_DATE,
+    o.CUS_ID,
+    o.PROD_ID,
+    p.PRO_NAME 
+FROM `order` o 
+INNER JOIN product p 
+	ON (o.PROD_ID=p.PRO_ID)
+WHERE o.cus_id = 2;
 
-select cg.cus_gender, COUNT(cus_gender) from (select cus_gender from customer c inner join `order` o on o.CUS_ID=c.CUS_ID where o.ORD_AMOUNT>=3000) as cg group by cus_gender;
+/* 5) Display the Supplier details who can supply more than one product. */
 
-select cus_gender,COUNT(cus_gender)  from customer c inner join `order` o on o.CUS_ID=c.CUS_ID where o.ORD_AMOUNT>=3000 group by cus_gender;
-
-
--- Display all the orders along with the product name ordered by a customer having Customer_Id=2.
-select * from `order` where CUS_ID=2;
-
-select * from `order` o inner join product p on o.PROD_ID=p.PRO_ID where o.CUS_ID=2;
-
-select o.ORD_ID,o.ORD_AMOUNT,o.ORD_DATE,o.CUS_ID,o.PROD_ID,p.PRO_NAME from `order` o inner join product p on o.PROD_ID=p.PRO_ID where o.CUS_ID=2;
-
-select o.ORD_ID,o.ORD_AMOUNT,o.ORD_DATE,o.CUS_ID,o.PROD_ID,p.PRO_NAME from `order` o inner join product p on (o.PROD_ID=p.PRO_ID and o.CUS_ID=2);
-
--- approach 2
-select * from `order`;
-select * from product_details;
-select * from product;
-
-
-select `order`.*,product.pro_name from `order` ,product_details,product where `order`.cus_id=2 and `order`.prod_id=product_details.prod_id and product_details.pro_id=product.pro_id;
-
--- Display the Supplier details who can supply more than one product.
-select * from product_details;
-select SUPP_ID, count(PROD_ID) from product_details GROUP by SUPP_ID;
-select SUPP_ID, count(PROD_ID) as no_of_products from product_details GROUP by SUPP_ID;
-select SUPP_ID from (select SUPP_ID, count(PROD_ID) as no_of_products from product_details GROUP by SUPP_ID) as pd where pd.no_of_products >=2;
-
-select * from supplier where supp_id in (select supp_id from product_details group by supp_id having count(supp_id)>1);
+SELECT s.supp_id,
+	s.supp_name,
+    s.supp_city,
+    s.supp_phone
+ FROM supplier s 
+ WHERE s.supp_id IN 
+	(SELECT p.supp_id 
+    FROM productdetails p 
+    GROUP BY p.supp_id 
+    HAVING COUNT(p.supp_id)>1);
 
 select s.* from supplier s join (select supp_id, count(supp_id) from product_details group by supp_id having count(supp_id) > 1) as pd on pd.supp_id = s.supp_id;
 

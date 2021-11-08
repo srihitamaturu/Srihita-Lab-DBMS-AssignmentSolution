@@ -34,7 +34,7 @@ CREATE TABLE supplier (
     FOREIGN KEY(pro_id) REFERENCES product(pro_id),
     FOREIGN KEY(supp_id) REFERENCES supplier(supp_id) );
     
- CREATE TABLE orders ( 
+ CREATE TABLE `order` ( 
 	ord_id INT PRIMARY KEY, 
     ord_amount INT,
     ord_date date,
